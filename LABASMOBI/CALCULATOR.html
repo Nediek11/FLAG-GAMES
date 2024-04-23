@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column; 
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .calculator-container {
+      display: flex;
+      flex-direction: column; 
+      align-items: center;
+    }
+
+    .calculator {
+      background-color: #808080;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: left; 
+      margin-bottom: 20px; 
+    }
+
+    .display {
+      background-color: #fff;
+      border: 2px solid #000;
+      border-radius: 10px;
+      font-size: 24px;
+      height: 50px;
+      margin-bottom: 10px;
+      padding: 5px 10px;
+      text-align: right;
+      width: calc(100% - 40px);
+    }
+
+    button {
+      background-color: #dcdcdc;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 20px;
+      height: 50px;
+      margin: 5px;
+      width: 50px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #b0b0b0;
+    }
+
+    
+    button[data-action="squareRoot"],
+    button[data-action="percentage"],
+    button[data-action="exponent"],
+    button[data-action="equal"],
+    button[data-action="addition"],
+    button[data-action="subtraction"],
+    button[data-action="multiplication"],
+    button[data-action="division"],
+    button[data-action="clear"] {
+      background-color: #ff3333;
+    }
+
+    .row {
+      display: flex;
+    }
+
+    .panel {
+      background-color: #f0f0f0;
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: left;
+      max-height: 300px; 
+      overflow-y: auto;
+      width: 200px;
+    }
+
+    #clear-history {
+      margin: auto; 
+      display: block; 
+      width: 150px;
+      height: 40px; 
+      font-size: 16px;
+      background-color: #ff3333;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #clear-history:hover {
+      background-color: #cc0000;
+    }
+
+    
+    .animate_animated {
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes animate_flip {
+      0% {
+        transform: rotateX(0deg);
+      }
+      50% {
+        transform: rotateX(180deg);
+      }
+      100% {
+        transform: rotateX(360deg);
+      }
+    }
+
+    .animate_flip {
+      animation-name: animate_flip;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator-container">
+    <h1 class="animate_animated animate_flip">CALCULATOR</h1>
+
+    <div class="calculator">
+      <input type="text" id="display" class="display" readonly>
+      <div class="row">
+        <button onclick="calculateSquareRoot()" data-action="squareRoot">√</button>
+        <button onclick="calculatePercentage()" data-action="percentage">%</button>
+        <button onclick="calculateExponent()" data-action="exponent">x<sup>2</sup></button>
+        <button onclick="clearDisplay()" data-action="clear">C</button>
+      </div>
+      <div class="row">
+        <button onclick="appendToDisplay('7')">7</button>
+        <button onclick="appendToDisplay('8')">8</button>
+        <button onclick="appendToDisplay('9')">9</button>
+        <button onclick="appendToDisplay('+')" data-action="addition">+</button>
+      </div>
+      <div class="row">
+        <button onclick="appendToDisplay('4')">4</button>
+        <button onclick="appendToDisplay('5')">5</button>
+        <button onclick="appendToDisplay('6')">6</button>
+        <button onclick="appendToDisplay('-')" data-action="subtraction">-</button>
+      </div>
+      <div class="row">
+        <button onclick="appendToDisplay('1')">1</button>
+        <button onclick="appendToDisplay('2')">2</button>
+        <button onclick="appendToDisplay('3')">3</button>
+        <button onclick="appendToDisplay('*')" data-action="multiplication">*</button>
+      </div>
+      <div class="row">
+        <button onclick="appendToDisplay('0')">0</button>
+        <button onclick="appendToDisplay('.')">.</button>
+        <button onclick="calculate()" data-action="equal">=</button>
+        <button onclick="appendToDisplay('/')" data-action="division">/</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Calculation History</h3>
+    <ul id="history-list"></ul>
+    <button onclick="clearHistory()" id="clear-history">Clear History</button>
+  </div>
+
+  <script>
+    let expression = '';
+    let history = [];
+
+    function appendToDisplay(value) {
+      expression += value;
+      document.getElementById('display').value = expression;
+    }
+
+    function calculate() {
+      try {
+        const result = eval(expression);
+        displayResult(result);
+        history.push(expression + ' = ' + result);
+      } catch (error) {
+        displayResult('Error');
+      }
+      expression = '';
+      displayHistory();
+    }
+
+    function displayResult(result) {
+      document.getElementById('display').value = result;
+    }
+
+    function calculateSquareRoot() {
+      const number = eval(expression);
+      const result = Math.sqrt(number);
+      displayResult(result);
+      history.push('√(' + number + ') = ' + result);
+      expression = '';
+      displayHistory();
+    }
+
+    function calculatePercentage() {
+      const number = eval(expression);
+      const result = number / 100;
+      displayResult(result);
+      history.push(number + '% = ' + result);
+      expression = '';
+      displayHistory();
+    }
+
+    function calculateExponent() {
+      const number = eval(expression);
+      const result = Math.pow(number, 2);
+      displayResult(result);
+      history.push(number + '^2 = ' + result);
+      expression = '';
+      displayHistory();
+    }
+
+    function clearDisplay() {
+      expression = '';
+      document.getElementById('display').value = '';
+    }
+
+    function clearHistory() {
+      history = [];
+      displayHistory();
+    }
+
+    function displayHistory() {
+      const historyList = document.getElementById('history-list');
+      historyList.innerHTML = '';
+      history.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        historyList.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>

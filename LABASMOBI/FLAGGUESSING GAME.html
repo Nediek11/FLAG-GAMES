@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flag Guessing Game</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-image: url('file:///C:/Users/MS User/Downloads/bg12.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+    font-family: 'Arial Black', sans-serif;
+    color: #ffffff;
+    text-shadow: -1px -1px 0 #000,  
+                  1px -1px 0 #000,
+                 -1px  1px 0 #000,
+                  1px  1px 0 #000;
+}
+
+    p {
+        color: #555;
+    }
+
+    #flag-container {
+        margin-bottom: 20px;
+    }
+
+    img {
+        max-width: 200px;
+        max-height: 150px;
+        margin-bottom: 20px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+    }
+
+    #guess-input {
+        padding: 8px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    #result {
+        margin-bottom: 10px;
+        color: #900;
+    }
+
+    #score, #grade {
+        font-weight: bold;
+        color: #333;
+    }
+
+    #grade {
+        margin-top: 20px;
+    }
+
+    #score, #grade {
+        margin-top: 20px;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    .animate {
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+    }
+
+    .bounce {
+        animation-name: bounce;
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-30px);
+        }
+        60% {
+            transform: translateY(-15px);
+        }
+    }
+</style>
+</head>
+<body onload="startGame()">
+
+<h1 class="animate animated animate_bounce animate_infinite">Welcome to the Flag Guessing Game!</h1>
+
+<div id="flag-container">
+    <img id="flag-img" src="" alt="Flag Image">
+</div>
+
+<p>Guess the country based on its flag.</p>
+
+<input type="text" id="guess-input" placeholder="Enter your guess">
+<button onclick="checkGuess()">Submit Guess</button>
+
+<div id="score"></div>
+<div id="result"></div>
+<div id="grade"></div>
+
+<script>
+    var flags = {
+        "United States": "flag2.png",
+        "United Kingdom": "flag3.png",
+        "France": "flag4.png",
+        "Germany": "flag1.png",
+        "Canada": "flag5.png",
+        "Philippines": "flag6.png",
+        "South Korea": "flag7.png",
+        "Japan": "flag11.png",
+        "Ireland": "flag9.png",
+        "Australia": "flag10.png",
+        
+    };
+
+    var flagImgElement = document.getElementById("flag-img");
+    var guessInput = document.getElementById("guess-input");
+    var resultDiv = document.getElementById("result");
+    var scoreDiv = document.getElementById("score");
+    var gradeDiv = document.getElementById("grade");
+
+    var totalScore = 0;
+    var totalQuestions = 0;
+    var remainingGuesses = 10;
+
+    function startGame() {
+        displayRandomFlag();
+        remainingGuesses = 10;
+        totalScore = 0;
+        totalQuestions = 0;
+        updateScore();
+        document.querySelector('h1').classList.add('bounce');
+    }
+
+    function displayRandomFlag() {
+        var countries = Object.keys(flags);
+        var randomCountryIndex = Math.floor(Math.random() * countries.length);
+        var randomCountry = countries[randomCountryIndex];
+        var flagFilename = flags[randomCountry];
+        var flagUrl = "file:///C:/Users/MS User/Downloads/" + flagFilename; 
+        flagImgElement.src = flagUrl;
+        flagImgElement.alt = randomCountry;
+    }
+
+    function checkGuess() {
+        var guessedCountry = guessInput.value.trim();
+        var correctCountry = flagImgElement.alt;
+        totalQuestions++;
+
+        if (guessedCountry.toLowerCase() === correctCountry.toLowerCase()) {
+            resultDiv.textContent = "Correct! 🎉";
+            totalScore++;
+        } else {
+            resultDiv.textContent = "Incorrect! 😞 The correct answer was: " + correctCountry;
+        }
+
+        guessInput.value = "";
+        remainingGuesses--;
+        updateScore();
+
+        if (remainingGuesses === 0) {
+            endGame();
+        } else {
+            displayRandomFlag();
+        }
+    }
+
+    function updateScore() {
+        var remainingGuessesDisplay = (remainingGuesses > 0) ? remainingGuesses : 0;
+        scoreDiv.textContent = "Score: " + totalScore + " / 10"; 
+        scoreDiv.innerHTML = "<br>Remaining Guesses: " + remainingGuessesDisplay;
+
+        var percentage = (totalScore / 10) * 100;
+
+        var grade = "";
+        if (percentage >= 90) {
+            grade = "A+";
+        } else if (percentage >= 80) {
+            grade = "A";
+        } else if (percentage >= 70) {
+            grade = "B";
+        } else if (percentage >= 60) {
+            grade = "C";
+        } else if (percentage >= 50) {
+            grade = "D";
+        } else {
+            grade = "F";
+        }
+
+        gradeDiv.textContent = "Grade: " + grade + " (" + percentage.toFixed(2) + "%)";
+    }
+
+    function endGame() {
+        guessInput.disabled = true;
+        resultDiv.textContent = "Game over!";
+        gradeDiv.textContent = "";
+    }
+</script>
+
+</body>
+</html>
